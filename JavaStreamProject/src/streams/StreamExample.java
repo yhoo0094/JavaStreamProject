@@ -20,8 +20,8 @@ public class StreamExample {
 		
 		//스트림 => 내부반복자
 		System.out.println("내부반복자 사용...");
-		Stream<String> stremas = users.stream();
-		stremas.forEach(t -> System.out.println(t.toString()));
+		Stream<String> streams = users.stream();
+		streams.forEach(t -> System.out.println(t.toString()));
 		
 		//람다식 이전
 //		stremas.forEach(new Consumer<String>() {

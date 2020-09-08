@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1">
+	<center>
+		<TableView fx:id="tableView" prefHeight="200" >
+			<columns>
+				<TableColumn prefWidth="100" resizable="false" text="물건명" />
+				<TableColumn prefWidth="100" resizable="false" text="상태" />
+				<TableColumn prefWidth="100" resizable="false" text="가격" />
+				<TableColumn prefWidth="100" resizable="false" text="수량" />
+			</columns>
+		</TableView>
+	</center>
+	<bottom>
+		<HBox prefHeight="50" alignment="CENTER" spacing="20">
+			<children>
+				<Button fx:id="btnUpdate" text="수정하기" />
+			</children>
+		</HBox>
+	</bottom>
+</BorderPane>
+
