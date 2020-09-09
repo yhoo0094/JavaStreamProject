@@ -19,16 +19,16 @@
    			<Label prefWidth="50" text="상품명" GridPane.columnIndex="0" GridPane.rowIndex="0" />
    			<Label prefWidth="50" text="상태" GridPane.columnIndex="0" GridPane.rowIndex="1" />
    			<Label prefWidth="50" text="가격" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-   			<TextField id="txtName" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0"  />
-   			<TextField id="txtStatus" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-   			<TextField id="txtPrice" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+   			<TextField id="txtName" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="0" text="이름" />
+   			<TextField id="txtStatus" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="1" text="상태"/>
+   			<TextField id="txtPrice" prefWidth="100" GridPane.columnIndex="1" GridPane.rowIndex="2" text="가격" />
    </children>
 		</GridPane>
 	</top>
 	<bottom>
 		<HBox prefHeight="24.0" spacing="20" alignment="CENTER">
 			<children>
-				<Button id="btnModify" text="완료" />
+				<Button id="btnSellAdd" text="완료" />
 			</children>
 		</HBox>
 	</bottom>

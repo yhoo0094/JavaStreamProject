@@ -13,6 +13,9 @@ public class ProjectMain extends Application{
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("login.fxml"));
 		GridPane root = loader.load();
 		
+		ProjectController controller = loader.getController();
+		controller.setPrimaryStage(primaryStage);
+		
 		Scene scene = new Scene(root);
 		primaryStage.setTitle("로그인");
 		primaryStage.setScene(scene);

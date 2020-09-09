@@ -31,7 +31,7 @@
 	<bottom>
 		<HBox prefHeight="50" alignment="CENTER" spacing="20">
 			<children>
-				<Button fx:id="btnBuy" text="구매하기" />
+				<Button fx:id="btnBuyEnd" text="구매하기" />
 			</children>
 		</HBox>
 	</bottom>
