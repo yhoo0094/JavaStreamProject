@@ -9,17 +9,8 @@
 <?import javafx.scene.control.TextField?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1">
-	<top>
-		<HBox prefHeight="50" alignment="CENTER" spacing="20">
-			<children>
-				<Label  text="검색" />
-				<TextField  prefWidth="150" id="sellSearch"/>
-				<Button  text="검색" id="btnSearch"/>	
-			</children>
-		</HBox>
-	</top>
 	<center>
-		<TableView fx:id="tableView" prefHeight="200" id="sellTableView">
+		<TableView fx:id="buyListTableView" prefHeight="200" >
 			<columns>
 				<TableColumn prefWidth="100" resizable="false" text="물건명" />
 				<TableColumn prefWidth="100" resizable="false" text="상태" />
@@ -27,13 +18,5 @@
 			</columns>
 		</TableView>
 	</center>
-	<bottom>
-		<HBox prefHeight="50" alignment="CENTER" spacing="20">
-			<children>
-				<Button fx:id="btnSellList" text="판매내역" />
-				<Button fx:id="btnAdd" text="물건등록" />
-			</children>
-		</HBox>
-	</bottom>
 </BorderPane>
 

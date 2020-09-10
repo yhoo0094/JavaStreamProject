@@ -13,7 +13,7 @@
 		<HBox prefHeight="50" alignment="CENTER" spacing="20">
 			<children>
 				<Label text="검색" />
-				<TextField prefWidth="150"/>
+				<TextField prefWidth="150" id="buySearch"/>
 				<Button text="검색" id="btnSearch"/>	
 			</children>
 		</HBox>
@@ -31,6 +31,7 @@
 	<bottom>
 		<HBox prefHeight="50" alignment="CENTER" spacing="20">
 			<children>
+				<Button fx:id="btnBuyList" text="구매내역" />
 				<Button fx:id="btnBuyEnd" text="구매하기" />
 			</children>
 		</HBox>

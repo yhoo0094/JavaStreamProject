@@ -22,6 +22,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -37,6 +38,9 @@ public class ProjectController implements Initializable {
 	String userId = null;
 	Stage stageSell = new Stage(StageStyle.UTILITY);
 	TableView<Item> buyTableView;
+	TableView<Item> sellTableView;
+	TableView<Item> buyListTableView;
+	TableView<Item> sellListTableView;
 	
 	Stage primaryStage;
 	public void setPrimaryStage(Stage primaryStage) {
@@ -73,16 +77,18 @@ public class ProjectController implements Initializable {
 				if (M.getName().equals(txtID.getText())) {
 					a = 1;
 					if (M.getPassword() == Integer.parseInt(txtPassword.getText())) {
-						primaryStage.close();
+						
 						// 구매 및 판매 창 띄우기
 						Stage stage = new Stage(StageStyle.UTILITY);
+						stage.initModality(Modality.WINDOW_MODAL);
+						stage.initOwner(primaryStage);
 						try {
 							Parent parent = FXMLLoader.load(getClass().getResource("BuyorSell.fxml"));
 
 							Scene scene = new Scene(parent);
-							stage.setTitle("구매/판매");
-							stage.setScene(scene);
-							stage.show();
+							primaryStage.setTitle("구매/판매");
+							primaryStage.setScene(scene);
+							primaryStage.show();
 
 							// 구매버튼
 							Button btnBuy = (Button) parent.lookup("#btnBuy");
@@ -142,6 +148,8 @@ public class ProjectController implements Initializable {
 	public void btnSignInAction() {
 		// 회원가입 창 띄우기
 		Stage stage = new Stage(StageStyle.UTILITY);
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(primaryStage);
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("SignIn.fxml"));
 
@@ -206,23 +214,89 @@ public class ProjectController implements Initializable {
 
 			buyTableView.setItems(ProjectDAO.listBuy());
 			
+			//구매하기버튼
 			buyTableView.setOnMouseClicked(e -> {
 				int buyPid = buyTableView.getSelectionModel().getSelectedItem().getPid();
+				Button btnBuyEnd = (Button) parent.lookup("#btnBuyEnd");
+				btnBuyEnd.setOnAction(a -> {
+					ProjectDAO.buy(buyPid, userId);
+					buyTableView.setItems(ProjectDAO.listBuy());
+				});
+			});
 			
-			Button btnBuyEnd = (Button) parent.lookup("#btnBuyEnd");
-			btnBuyEnd.setOnAction(a -> btnBuyEndAction(buyPid));
-		});
+			//구매내역버튼
+			Button btnBuyList = (Button) parent.lookup("#btnBuyList");
+			btnBuyList.setOnAction(e -> btnBuyListAction());
+			
+			//검색버튼
+			TextField buySearch = (TextField) parent.lookup("#buySearch");
+			Button btnSearch = (Button) parent.lookup("#btnSearch");
+			btnSearch.setOnAction(e -> buyTableView.setItems(ProjectDAO.btnSearchAction(buySearch.getText())));
+			
+			
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void btnBuyEndAction(int buyPid) {
-		ProjectDAO.buy(buyPid);
-		buyTableView.setItems(ProjectDAO.listBuy());
+	//구매내역 창
+	public void btnBuyListAction() {
+		Stage stage = new Stage(StageStyle.UTILITY);
+		try {
+			Parent parent = FXMLLoader.load(getClass().getResource("BuyList.fxml"));
+			Scene scene = new Scene(parent);
+			stage.setTitle("구매내역");
+			stage.setScene(scene);
+			stage.show();
+			
+			buyListTableView = (TableView<Item>) parent.lookup("#buyListTableView");
+
+			TableColumn<Item, ?> tc = buyListTableView.getColumns().get(0);// 첫번째칼럼
+			tc.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+			tc = buyListTableView.getColumns().get(1);
+			tc.setCellValueFactory(new PropertyValueFactory<>("condition"));
+
+			tc = buyListTableView.getColumns().get(2);
+			tc.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+			buyListTableView.setItems(ProjectDAO.listBuy(userId));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	TableView<Item> sellTableView;
+	
+	//판매내역 창
+	public void btnSellListAction() {
+		Stage stage = new Stage(StageStyle.UTILITY);
+		try {
+			Parent parent = FXMLLoader.load(getClass().getResource("SellList.fxml"));
+			Scene scene = new Scene(parent);
+			stage.setTitle("판매내역");
+			stage.setScene(scene);
+			stage.show();
+		
+			sellListTableView = (TableView<Item>) parent.lookup("#sellListTableView");
+
+			TableColumn<Item, ?> tc = sellListTableView.getColumns().get(0);// 첫번째칼럼
+			tc.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+			tc = sellListTableView.getColumns().get(1);
+			tc.setCellValueFactory(new PropertyValueFactory<>("condition"));
+
+			tc = sellListTableView.getColumns().get(2);
+			tc.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+			sellListTableView.setItems(ProjectDAO.listSell(userId));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void btnSellAction() {
 		// 판매 창 띄우기
 		try {
@@ -244,31 +318,31 @@ public class ProjectController implements Initializable {
 			tc = sellTableView.getColumns().get(2);
 			tc.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-			IList = ProjectDAO.listSell(userId);
+			IList = ProjectDAO.listSelling(userId);
 			sellTableView.setItems(IList);
 
 			Button btnAdd = (Button) parent.lookup("#btnAdd");
 			btnAdd.setOnAction(e -> btnAddAction());
 			
+			//검색버튼
+			TextField sellSearch = (TextField) parent.lookup("#sellSearch");
+			Button btnSearch = (Button) parent.lookup("#btnSearch");
+			btnSearch.setOnAction(e -> sellTableView.setItems(ProjectDAO.btnSearchAction(sellSearch.getText())));
+			
+			//수정하기
 			sellTableView.setOnMouseClicked(e -> {
 				if(e.getClickCount() == 2) { //더블클릭이면
 					int selectedPID = sellTableView.getSelectionModel().getSelectedItem().getPid();
 					handleDoubleClickAction(selectedPID);
 				}
 			});
-
+			
+			//판매내역
+			Button btnSellList = (Button) parent.lookup("#btnSellList");
+			btnSellList.setOnAction(e -> btnSellListAction());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-//		TableView<Item> sellView = (TableView) parent.lookup("#sellView");
-//		sellView.setOnMouseClicked(event -> {
-//			
-//			if(event.getClickCount() == 2) { //더블클릭이면
-//				String selectedName = tableView.getSelectionModel().getSelectedItem().getName();
-//				handleDoubleClickAction(selectedName);
-//			}
-//	});
 	}
 	
 	public void handleDoubleClickAction(int selectedPID) {
@@ -301,7 +375,7 @@ public class ProjectController implements Initializable {
 				String status = txtStatus.getText();
 				String price = txtPrice.getText();
 				ProjectDAO.btnModifyAction(name, status, price, selectedPID);
-				IList = ProjectDAO.listSell(userId);
+				IList = ProjectDAO.listSelling(userId);
 				sellTableView.setItems(IList);
 				stage.close();
 			});
@@ -332,7 +406,7 @@ public class ProjectController implements Initializable {
 				String status = txtStatus.getText();
 				String price = txtPrice.getText();
 				ProjectDAO.btnSellAddAction(userId, name, status, price);
-				IList = ProjectDAO.listSell(userId);
+				IList = ProjectDAO.listSelling(userId);
 				sellTableView.setItems(IList);
 				stage.close();
 			});
