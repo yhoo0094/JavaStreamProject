@@ -10,9 +10,83 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class ProjectDAO {
-	static ObservableList<Item> listBuy() {
+	
+	//일련번호로 메세지 가져오기
+	static Massage selectMassage(int selectedMId) {
 		Connection conn = ConnectionDB.getDB();
-		String sql = "select * from SELLITEM";
+		String sql = "select * from MASSAGE where MID =" + selectedMId;
+		ObservableList<Massage> list = FXCollections.observableArrayList();
+		Massage msg = null;
+		try {
+			PreparedStatement pstmt =conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			 while(rs.next()) {
+				 msg = new Massage(rs.getString("FROMID"), rs.getString("TOID"), rs.getString("TITLE"), rs.getString("MASSAGE"), rs.getInt("MID"));
+	               list.add(msg);
+	            };
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return msg;
+	}
+	
+	//내가 보낸게 아닌 메세지 가져오기
+	static ObservableList<Massage> selectMassage(String userId) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "select * from MASSAGE where FROMID !='" + userId + "'";
+		ObservableList<Massage> list = FXCollections.observableArrayList();
+		try {
+			PreparedStatement pstmt =conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			 while(rs.next()) {
+				 Massage msg = new Massage(rs.getString("FROMID"), rs.getString("TOID"), rs.getString("TITLE"), rs.getString("MASSAGE"), rs.getInt("MID"));
+	               list.add(msg);
+	            };
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	//구매창에서 더블클릭해서 PId값에 따른 ID가져오기
+	static Item selectIdOfPId(int selectedPId) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "select * from SELLITEM where PID =" + selectedPId;
+		ObservableList<Item> list = FXCollections.observableArrayList();
+		Item item = null;
+		try {
+			PreparedStatement pstmt =conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			while(rs.next()) {
+			item = new Item(rs.getString("ID"), rs.getString("NAME"), 
+	            		   rs.getString("CONDITION"), rs.getInt("PRICE"), rs.getInt("PID"));
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return item;	
+	}
+	
+	static ObservableList<Member> selectMember() {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "select * from MEMBER";
+		ObservableList<Member> list = FXCollections.observableArrayList();
+		try {
+			PreparedStatement pstmt =conn.prepareStatement(sql);
+			ResultSet rs = pstmt.executeQuery();
+			 while(rs.next()) {
+	               Member mem = new Member(rs.getString("ID"), rs.getInt("PASSWORD"));
+	               list.add(mem);
+	            };
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	static ObservableList<Item> listOfBuy(String userId) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "select * from SELLITEM where ID != '" + userId + "'";
 		ObservableList<Item> list = FXCollections.observableArrayList();
 		try {
 			PreparedStatement pstmt =conn.prepareStatement(sql);
@@ -80,6 +154,21 @@ public class ProjectDAO {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	static void btnSendMassageAction(String userId, String sellingId, String MassageTitle , String Massage) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "insert into MASSAGE values(?, ?, ?, ?, MassageSequence.nextval)";
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setNString(1,	userId);
+			pstmt.setNString(2,	sellingId);
+			pstmt.setNString(3,	Massage);
+			pstmt.setNString(4,	MassageTitle);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	static void btnSignIn(String txtID, String txtPassword) {
@@ -177,5 +266,6 @@ public class ProjectDAO {
 		}
 		return list;
 	}
+	
 	
 }

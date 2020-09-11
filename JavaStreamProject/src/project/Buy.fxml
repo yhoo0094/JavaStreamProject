@@ -24,6 +24,7 @@
 				<TableColumn prefWidth="100" resizable="false" text="물건명" />
 				<TableColumn prefWidth="100" resizable="false" text="상태" />
 				<TableColumn prefWidth="100" resizable="false" text="가격" />
+				<TableColumn prefWidth="100" resizable="false" text="일련번호" />
 			</columns>
 		</TableView>
 		

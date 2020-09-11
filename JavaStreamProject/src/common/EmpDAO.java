@@ -11,7 +11,7 @@ import javafx.collections.ObservableList;
 
 public class EmpDAO {
 	
-	static List<Employee> getEmpList(){
+	public static List<Employee> getEmpList(){
 		Connection conn = ConnectionDB.getDB();
 		String sql = "select * from EMPLOYEES";
 		ObservableList<Employee> list = FXCollections.observableArrayList();
