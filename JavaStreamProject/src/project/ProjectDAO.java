@@ -30,16 +30,16 @@ public class ProjectDAO {
 		return msg;
 	}
 	
-	//내가 보낸게 아닌 메세지 가져오기
+	//받은 메세지 가져오기
 	static ObservableList<Massage> selectMassage(String userId) {
 		Connection conn = ConnectionDB.getDB();
-		String sql = "select * from MASSAGE where FROMID !='" + userId + "'";
+		String sql = "select * from MASSAGE where TOID ='" + userId + "'";
 		ObservableList<Massage> list = FXCollections.observableArrayList();
 		try {
 			PreparedStatement pstmt =conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
 			 while(rs.next()) {
-				 Massage msg = new Massage(rs.getString("FROMID"), rs.getString("TOID"), rs.getString("TITLE"), rs.getString("MASSAGE"), rs.getInt("MID"));
+				 Massage msg = new Massage(rs.getString("FROMID"), rs.getString("TOID"), rs.getString("TITLE"), rs.getString("MASSAGE"), rs.getInt("MID"), rs.getString("CHK"));
 	               list.add(msg);
 	            };
 		} catch (SQLException e) {
@@ -47,6 +47,24 @@ public class ProjectDAO {
 		}
 		return list;
 	}
+	
+	//읽지 않은 메세지 가져오기
+		static ObservableList<Massage> selectNotReadMassage(String userId) {
+			Connection conn = ConnectionDB.getDB();
+			String sql = "select * from MASSAGE where TOID ='" + userId + "' and CHK = 'new'";
+			ObservableList<Massage> list = FXCollections.observableArrayList();
+			try {
+				PreparedStatement pstmt =conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery();
+				 while(rs.next()) {
+					 Massage msg = new Massage(rs.getString("FROMID"), rs.getString("TOID"), rs.getString("TITLE"), rs.getString("MASSAGE"), rs.getInt("MID"));
+		               list.add(msg);
+		            };
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return list;
+		}
 	
 	//구매창에서 더블클릭해서 PId값에 따른 ID가져오기
 	static Item selectIdOfPId(int selectedPId) {
@@ -158,13 +176,13 @@ public class ProjectDAO {
 	
 	static void btnSendMassageAction(String userId, String sellingId, String MassageTitle , String Massage) {
 		Connection conn = ConnectionDB.getDB();
-		String sql = "insert into MASSAGE values(?, ?, ?, ?, MassageSequence.nextval)";
+		String sql = "insert into MASSAGE values(?, ?, ?, ?, MassageSequence.nextval, 'new')";
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.setNString(1,	userId);
 			pstmt.setNString(2,	sellingId);
-			pstmt.setNString(3,	Massage);
-			pstmt.setNString(4,	MassageTitle);
+			pstmt.setNString(3,	MassageTitle);
+			pstmt.setNString(4,	Massage);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -207,6 +225,28 @@ public class ProjectDAO {
 			pstmt.setString(1,	name);
 			pstmt.setString(2,	status);
 			pstmt.setString(3,	price);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static void UpdateChk(int selectedMId) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "UPDATE MASSAGE SET CHK = '　' WHERE MID = "+ selectedMId;
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static void btnDeleteMassageAction(int selectedMId) {
+		Connection conn = ConnectionDB.getDB();
+		String sql = "delete MASSAGE where MID = "+ selectedMId;
+		try {
+			PreparedStatement pstmt = conn.prepareStatement(sql);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

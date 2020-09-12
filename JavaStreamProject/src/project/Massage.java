@@ -9,6 +9,7 @@ public class Massage {
 	private SimpleStringProperty title;
 	private SimpleStringProperty massage;
 	private SimpleIntegerProperty mid;
+	private SimpleStringProperty chk;
 	
 	public Massage(String fromId, String toId, String title, String massage) {
 		this.fromId = new SimpleStringProperty(fromId);
@@ -23,6 +24,15 @@ public class Massage {
 		this.title = new SimpleStringProperty(title);
 		this.massage = new SimpleStringProperty(massage);
 		this.mid = new SimpleIntegerProperty(mid);
+	}
+	
+	public Massage(String fromId, String toId, String title, String massage, Integer mid, String chk) {
+		this.fromId = new SimpleStringProperty(fromId);
+		this.toId = new SimpleStringProperty(toId);
+		this.title = new SimpleStringProperty(title);
+		this.massage = new SimpleStringProperty(massage);
+		this.mid = new SimpleIntegerProperty(mid);
+		this.chk = new SimpleStringProperty(chk);
 	}
 	
 	public String getFromId() {
@@ -58,5 +68,12 @@ public class Massage {
 	}
 	public void setMid(Integer mid) {
 		this.mid.set(mid);
+	}
+	
+	public String getChk() {
+		return this.chk.get();
+	}
+	public void setChk(String chk) {
+		this.chk.set(chk);
 	}
 }

@@ -8,10 +8,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefWidth="300">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefWidth="350">
 	<center>
 		<TableView fx:id="massageListTableView" prefHeight="200" prefWidth="300" >
 			<columns>
+				<TableColumn prefWidth="50" resizable="false" text="NEW" />
 				<TableColumn prefWidth="100" resizable="false" text="보낸사람" />
 				<TableColumn prefWidth="200" resizable="false" text="제목" />
 			</columns>

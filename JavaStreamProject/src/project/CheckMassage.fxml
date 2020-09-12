@@ -28,6 +28,7 @@
 		<HBox alignment="CENTER" prefHeight="50" spacing="20">
 			<children>
 				<Button fx:id="btnSendMassage" text="답장" />
+				<Button fx:id="btnDeleteMassage" text="삭제" />
 				<Button fx:id="btnMassageEnd" text="취소" />
 			</children>
 		</HBox>

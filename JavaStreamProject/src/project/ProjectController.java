@@ -47,7 +47,8 @@ public class ProjectController implements Initializable {
 	TableView<Item> buyListTableView;
 	TableView<Item> sellListTableView;
 	TableView<Massage> massageListTableView;
-	
+	Label txtMassage;
+
 	Stage primaryStage;
 
 	public void setPrimaryStage(Stage primaryStage) {
@@ -97,14 +98,19 @@ public class ProjectController implements Initializable {
 							primaryStage.setScene(scene);
 							primaryStage.show();
 
-							//환영문구
-							Label textWelcome = (Label)parent.lookup("#textWelcome");
+							// 환영문구
+							Label textWelcome = (Label) parent.lookup("#textWelcome");
 							textWelcome.setText(userId + "님 환영합니다!");
 							
-							//쪽지확인 버튼
+							//쪽지 갯수 나타내기
+							int massageCount = ProjectDAO.selectNotReadMassage(userId).size();
+							txtMassage = (Label)parent.lookup("#txtMassage");
+							txtMassage.setText("쪽지(" + massageCount + ")");
+							
+							// 쪽지확인 버튼
 							Button MassageChk = (Button) parent.lookup("#MassageChk");
 							MassageChk.setOnAction(e -> MassageChkAction());
-							
+
 							// 구매버튼
 							Button btnBuy = (Button) parent.lookup("#btnBuy");
 							btnBuy.setOnAction(e -> btnBuyAction());
@@ -159,10 +165,12 @@ public class ProjectController implements Initializable {
 			e1.printStackTrace();
 		}
 	}
-	
-	//받은 메세지 창
+
+	// 받은 메세지 창
 	public void MassageChkAction() {
 		Stage stage = new Stage(StageStyle.UTILITY);
+		stage.initModality(Modality.WINDOW_MODAL);
+		stage.initOwner(primaryStage);
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("MassageList.fxml"));
 
@@ -170,32 +178,38 @@ public class ProjectController implements Initializable {
 			stage.setTitle("받은 메세지");
 			stage.setScene(scene);
 			stage.show();
-			
+
 			massageListTableView = (TableView<Massage>) parent.lookup("#massageListTableView");
 
 			TableColumn<Massage, ?> tc = massageListTableView.getColumns().get(0);// 첫번째칼럼
+			tc.setCellValueFactory(new PropertyValueFactory<>("chk"));
+			
+			tc = massageListTableView.getColumns().get(1);// 첫번째칼럼
 			tc.setCellValueFactory(new PropertyValueFactory<>("fromId"));
 
-			tc = massageListTableView.getColumns().get(1);
+			tc = massageListTableView.getColumns().get(2);
 			tc.setCellValueFactory(new PropertyValueFactory<>("title"));
 
 			massageListTableView.setItems(ProjectDAO.selectMassage(userId));
 			
+			//메세지 내용 보기
 			massageListTableView.setOnMouseClicked(event -> {
-				if(event.getClickCount() == 2) { //더블클릭이면
+				if (event.getClickCount() == 2) { // 더블클릭이면
 					int selectedMId = massageListTableView.getSelectionModel().getSelectedItem().getMid();
 					CheckMsg(selectedMId);
+					ProjectDAO.UpdateChk(selectedMId);
+					massageListTableView.setItems(ProjectDAO.selectMassage(userId));
 				}
 			});
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
-	
-	//받은 메세지 내용보기
+
+	// 받은 메세지 내용보기
 	public void CheckMsg(int selectedMId) {
 		Massage massage = ProjectDAO.selectMassage(selectedMId);
-		
+
 		Stage stage = new Stage(StageStyle.UTILITY);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(primaryStage);
@@ -206,13 +220,64 @@ public class ProjectController implements Initializable {
 			stage.setTitle("받은 메세지");
 			stage.setScene(scene);
 			stage.show();
-			
+
 			TextField MassageTitle = (TextField) parent.lookup("#MassageTitle");
 			TextField Massage = (TextField) parent.lookup("#Massage");
-			
+
 			MassageTitle.setText(String.valueOf(massage.getTitle()));
 			Massage.setText(String.valueOf(massage.getMassage()));
+
+			// 답장 버튼
+			String fromId = massage.getFromId();
+			Button btnSendMassage = (Button) parent.lookup("#btnSendMassage");
+			btnSendMassage.setOnAction(e -> {
+				stage.close();
+				answerMassageAction(fromId);
+			});
 			
+			//삭제 버튼
+			Button btnDeleteMassage = (Button) parent.lookup("#btnDeleteMassage");
+			btnDeleteMassage.setOnAction(e -> {
+				ProjectDAO.btnDeleteMassageAction(selectedMId);
+				massageListTableView.setItems(ProjectDAO.selectMassage(userId));
+				stage.close();
+			});
+
+			// 취소 버튼
+			Button btnMassageEnd = (Button) parent.lookup("#btnMassageEnd");
+			btnMassageEnd.setOnAction(e -> stage.close());
+			
+			
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 답장 보내기
+	public void answerMassageAction(String fromId) {
+		// 쪽지창
+		Stage stage = new Stage(StageStyle.UTILITY);
+		try {
+			Parent parent = FXMLLoader.load(getClass().getResource("SendMassage.fxml"));
+			Scene scene = new Scene(parent);
+			stage.setTitle("쪽지");
+			stage.setScene(scene);
+			stage.show();
+
+			TextField MassageTitle = (TextField) parent.lookup("#MassageTitle");
+			TextField Massage = (TextField) parent.lookup("#Massage");
+
+			// 보내기 버튼
+			Button btnSendMassage = (Button) parent.lookup("#btnSendMassage");
+			btnSendMassage.setOnAction(e -> {
+				ProjectDAO.btnSendMassageAction(userId, fromId, MassageTitle.getText(), Massage.getText());
+				stage.close();
+			});
+
+			// 취소 버튼
+			Button btnMassageEnd = (Button) parent.lookup("#btnMassageEnd");
+			btnMassageEnd.setOnAction(e -> stage.close());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -325,7 +390,7 @@ public class ProjectController implements Initializable {
 
 			tc = buyTableView.getColumns().get(2);
 			tc.setCellValueFactory(new PropertyValueFactory<>("price"));
-			
+
 			tc = buyTableView.getColumns().get(3);
 			tc.setCellValueFactory(new PropertyValueFactory<>("pid"));
 
@@ -339,7 +404,8 @@ public class ProjectController implements Initializable {
 					ProjectDAO.buy(buyPid, userId);
 					buyTableView.setItems(ProjectDAO.listOfBuy(userId));
 				});
-				if(e.getClickCount() == 2) { //더블클릭이면
+				// 메세지 보내기
+				if (e.getClickCount() == 2) { // 더블클릭이면
 					int selectedPId = buyTableView.getSelectionModel().getSelectedItem().getPid();
 					doubleClickAction(selectedPId);
 				}
@@ -358,13 +424,13 @@ public class ProjectController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
-	//구매창에서 더블클릭해서 쪽지보내기
+
+	// 구매창에서 더블클릭해서 쪽지보내기
 	public void doubleClickAction(int selectedPId) {
 		Item item = ProjectDAO.selectIdOfPId(selectedPId);
 		String sellingId = item.getId();
-		
-		//쪽지창
+
+		// 쪽지창
 		Stage stage = new Stage(StageStyle.UTILITY);
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("SendMassage.fxml"));
@@ -372,16 +438,18 @@ public class ProjectController implements Initializable {
 			stage.setTitle("쪽지");
 			stage.setScene(scene);
 			stage.show();
-			
+
 			TextField MassageTitle = (TextField) parent.lookup("#MassageTitle");
 			TextField Massage = (TextField) parent.lookup("#Massage");
-			
-			//보내기 버튼
+
+			// 보내기 버튼
 			Button btnSendMassage = (Button) parent.lookup("#btnSendMassage");
-			btnSendMassage.setOnAction(e -> {ProjectDAO.btnSendMassageAction(userId, sellingId, MassageTitle.getText(), Massage.getText());
-				stage.close();});
-			
-			//취소 버튼
+			btnSendMassage.setOnAction(e -> {
+				ProjectDAO.btnSendMassageAction(userId, sellingId, MassageTitle.getText(), Massage.getText());
+				stage.close();
+			});
+
+			// 취소 버튼
 			Button btnMassageEnd = (Button) parent.lookup("#btnMassageEnd");
 			btnMassageEnd.setOnAction(e -> stage.close());
 		} catch (IOException e) {
