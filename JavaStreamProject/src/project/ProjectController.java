@@ -61,9 +61,20 @@ public class ProjectController implements Initializable {
 		btnLogin.setOnAction(e -> btnLoginAction());
 		// 회원가입 버튼
 		btnSignIn.setOnAction(e -> btnSignInAction());
-
+		
+//		//관리자 창 띄우기
+//		txtID.setOnMouseClicked(e->{
+//			if(e.getClickCount() == 5) {
+//				adminWindow();
+//				}
+//		});
 	}// end of initialize
 
+//	public void adminWindow() {
+//		
+//	}
+	
+	//로그인 메소드
 	public void btnLoginAction() {
 		userId = txtID.getText();
 		try {
@@ -97,6 +108,12 @@ public class ProjectController implements Initializable {
 							primaryStage.setTitle("구매/판매");
 							primaryStage.setScene(scene);
 							primaryStage.show();
+							
+							//새로고침
+							Button btnRefresh = (Button) parent.lookup("#btnRefresh");
+							btnRefresh.setOnAction(e -> {
+								btnLoginAction();
+							});
 
 							// 환영문구
 							Label textWelcome = (Label) parent.lookup("#textWelcome");
@@ -215,7 +232,7 @@ public class ProjectController implements Initializable {
 		stage.initOwner(primaryStage);
 		try {
 			Parent parent = FXMLLoader.load(getClass().getResource("CheckMassage.fxml"));
-
+			
 			Scene scene = new Scene(parent);
 			stage.setTitle("받은 메세지");
 			stage.setScene(scene);
@@ -246,9 +263,7 @@ public class ProjectController implements Initializable {
 			// 취소 버튼
 			Button btnMassageEnd = (Button) parent.lookup("#btnMassageEnd");
 			btnMassageEnd.setOnAction(e -> stage.close());
-			
-			
-
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -391,8 +406,8 @@ public class ProjectController implements Initializable {
 			tc = buyTableView.getColumns().get(2);
 			tc.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-			tc = buyTableView.getColumns().get(3);
-			tc.setCellValueFactory(new PropertyValueFactory<>("pid"));
+//			tc = buyTableView.getColumns().get(3);
+//			tc.setCellValueFactory(new PropertyValueFactory<>("pid"));
 
 			buyTableView.setItems(ProjectDAO.listOfBuy(userId));
 
@@ -625,7 +640,6 @@ public class ProjectController implements Initializable {
 				sellTableView.setItems(IList);
 				stage.close();
 			});
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

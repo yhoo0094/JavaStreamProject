@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+
+<GridPane prefHeight="700.0" prefWidth="700.0"
+xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<padding>
+	<Insets topRightBottomLeft="50"/>
+</padding>
+   <children>
+      <GridPane alignment="CENTER" GridPane.rowIndex="1">
+         <children>
+            <Label text="유저" GridPane.columnSpan="2" GridPane.rowIndex="0" textAlignment="CENTER" alignment="CENTER"/>
+            <TableView prefHeight="300.0" prefWidth="300.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+              <columns>
+                <TableColumn prefWidth="150.0" text="ID" />
+                <TableColumn prefWidth="150.0" text="PASSWORD" />
+              </columns>
+            </TableView>
+            <HBox alignment="CENTER" GridPane.rowIndex="2" GridPane.columnSpan="2" spacing="20">
+            	<children>
+            		<Button text="수정" textAlignment="CENTER"/>
+            		<Button text="삭제" textAlignment="CENTER"/>	
+            	</children>
+            </HBox>
+         </children>
+      </GridPane>
+      
+      <GridPane alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+         	<Label text="메세지"/>
+            <TableView fx:id="massageListTableView" prefHeight="300.0" prefWidth="300.0" GridPane.columnSpan="2" GridPane.rowIndex="1" >
+				<columns>
+					<TableColumn prefWidth="50" resizable="false" text="받는사람" />
+					<TableColumn prefWidth="50" resizable="false" text="보낸사람" />
+					<TableColumn prefWidth="200" resizable="false" text="제목" />
+				</columns>
+			</TableView>
+			<HBox alignment="CENTER" GridPane.rowIndex="2" GridPane.columnSpan="2" spacing="20">
+            	<children>
+            		<Button text="삭제" textAlignment="CENTER"/>	
+            	</children>
+            </HBox>
+         </children>
+      </GridPane>
+      
+      <GridPane GridPane.rowIndex="2">
+         <children>
+         	<Label text="판매중인 물건" />
+            <TableView fx:id="tableView" prefHeight="300.0" prefWidth="300.0" 
+            id="sellTableView" GridPane.columnSpan="2" GridPane.rowIndex="1">
+				<columns>
+					<TableColumn prefWidth="100" resizable="false" text="물건명" />
+					<TableColumn prefWidth="100" resizable="false" text="상태" />
+					<TableColumn prefWidth="100" resizable="false" text="가격" />
+				</columns>
+			</TableView>
+			<HBox alignment="CENTER" GridPane.rowIndex="2" GridPane.columnSpan="2" spacing="20">
+            	<children>
+            		<Button text="수정" textAlignment="CENTER"/>	
+            		<Button text="삭제" textAlignment="CENTER"/>	
+            	</children>
+            </HBox>
+         </children>
+      </GridPane>
+      
+      
+      <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+           <Label text="판매가 완료된 물건" />
+            <TableView fx:id="tableView" prefHeight="300.0" prefWidth="300.0" 
+            id="sellTableView" GridPane.columnSpan="2" GridPane.rowIndex="1">
+				<columns>
+					<TableColumn prefWidth="100" resizable="false" text="물건명" />
+					<TableColumn prefWidth="100" resizable="false" text="상태" />
+					<TableColumn prefWidth="100" resizable="false" text="가격" />
+				</columns>
+			</TableView>
+			<HBox alignment="CENTER" GridPane.rowIndex="2" GridPane.columnSpan="2" spacing="20">
+            	<children>
+            		<Button text="수정" textAlignment="CENTER"/>	
+            		<Button text="삭제" textAlignment="CENTER"/>	
+            	</children>
+            </HBox>
+         </children>
+      </GridPane>
+   </children>
+</GridPane>
